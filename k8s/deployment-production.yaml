@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: py-memory-production
+  namespace: py-memory
+  labels:
+    app: py-memory
+    allocator: production
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: py-memory
+      allocator: production
+  template:
+    metadata:
+      labels:
+        app: py-memory
+        allocator: production
+    spec:
+      containers:
+        - name: app
+          image: localhost/py-memory-production:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8000
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "100m"
+            limits:
+              memory: "2Gi"
+              cpu: "2"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 5

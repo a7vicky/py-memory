@@ -12,7 +12,14 @@ from prometheus_client import Gauge, generate_latest, CONTENT_TYPE_LATEST
 
 app = FastAPI(title="glibc malloc fragmentation reproducer")
 
-ALLOCATOR_LABEL = "jemalloc" if "jemalloc" in os.environ.get("LD_PRELOAD", "") else "glibc"
+_has_jemalloc = "jemalloc" in os.environ.get("LD_PRELOAD", "")
+_pymalloc_bypassed = os.environ.get("PYTHONMALLOC") == "malloc"
+if _has_jemalloc and _pymalloc_bypassed:
+    ALLOCATOR_LABEL = "jemalloc+malloc"
+elif _has_jemalloc:
+    ALLOCATOR_LABEL = "jemalloc"
+else:
+    ALLOCATOR_LABEL = "glibc"
 prom_vm_rss = Gauge("py_memory_vm_rss_bytes", "VmRSS in bytes", ["allocator"])
 prom_vm_data = Gauge("py_memory_vm_data_bytes", "VmData in bytes", ["allocator"])
 prom_rss_anon = Gauge("py_memory_rss_anon_bytes", "RssAnon in bytes", ["allocator"])
@@ -77,6 +84,7 @@ async def metrics():
 
     info["allocator"] = "jemalloc" if os.environ.get("LD_PRELOAD", "").find("jemalloc") >= 0 else "glibc"
     info["MALLOC_CONF"] = os.environ.get("MALLOC_CONF", "not set")
+    info["PYTHONMALLOC"] = os.environ.get("PYTHONMALLOC", "default (pymalloc)")
     return info
 
 
