@@ -1,0 +1,15 @@
+FROM registry.access.redhat.com/ubi9/python-312:1
+
+# Bypass pymalloc — route ALL allocations through glibc malloc
+ENV PYTHONMALLOC=malloc
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY app.py .
+
+EXPOSE 8000
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000", \
+     "--workers", "3", \
+     "--limit-max-requests", "800", \
+     "--timeout-graceful-shutdown", "60"]

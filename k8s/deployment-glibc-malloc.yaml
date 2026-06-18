@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: py-memory-glibc-malloc
+  namespace: py-memory
+  labels:
+    app: py-memory
+    allocator: glibc-malloc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: py-memory
+      allocator: glibc-malloc
+  template:
+    metadata:
+      labels:
+        app: py-memory
+        allocator: glibc-malloc
+    spec:
+      containers:
+        - name: app
+          image: localhost/py-memory-glibc-malloc:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8000
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "100m"
+            limits:
+              memory: "2Gi"
+              cpu: "2"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 5

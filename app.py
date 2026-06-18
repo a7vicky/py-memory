@@ -18,6 +18,8 @@ if _has_jemalloc and _pymalloc_bypassed:
     ALLOCATOR_LABEL = "jemalloc+malloc"
 elif _has_jemalloc:
     ALLOCATOR_LABEL = "jemalloc"
+elif _pymalloc_bypassed:
+    ALLOCATOR_LABEL = "glibc+malloc"
 else:
     ALLOCATOR_LABEL = "glibc"
 prom_vm_rss = Gauge("py_memory_vm_rss_bytes", "VmRSS in bytes", ["allocator"])
