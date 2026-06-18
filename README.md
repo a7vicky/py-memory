@@ -257,7 +257,7 @@ RSS grows to 1.8 GiB and never shrinks, even at idle
 
 ## References
 
-- [DW-2723](https://redhat.atlassian.net/browse/DW-2723) — SA 2.0 Pod RSS memory not releasing back to OS
+- Pod RSS memory not releasing back to the OS
 - [jemalloc tuning](https://jemalloc.net/jemalloc.3.html) — `dirty_decay_ms`, `muzzy_decay_ms`, `narenas`
 - [glibc malloc internals](https://sourceware.org/glibc/wiki/MallocInternals) — arena design, threading model
 - [THP documentation](https://www.kernel.org/doc/html/latest/admin-guide/mm/transhuge.html) — Transparent Huge Pages
