@@ -1,0 +1,18 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: py-memory
+  namespace: py-memory
+  labels:
+    release: kube-prometheus
+spec:
+  selector:
+    matchLabels:
+      app: py-memory
+  namespaceSelector:
+    matchNames:
+      - py-memory
+  endpoints:
+    - port: http
+      path: /prom-metrics
+      interval: 10s
